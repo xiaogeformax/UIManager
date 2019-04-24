@@ -90,6 +90,68 @@ namespace UIFramework
             this.ChildParentNode = this.Transform.FindTransform("ChildParentNode");
 
             UIManager.Instance.SetUIParent(this, false);
+
+            //记录所有Canvas初始化的sortingOrder
+            Canvas[] tempCanvases = this.GameObject.GetComponentsInChildren<Canvas>(true);
+            CanvasDic = new Dictionary<Canvas, int>(tempCanvases.Length);
+            for (int i = 0; i < tempCanvases.Length; i++)
+            {
+                Canvas tempCanvas = tempCanvases[i];
+                CanvasDic[tempCanvas] = tempCanvas.sortingOrder;
+            }
+            if (this.UiData.HasAnimation)
+                this.Animator = this.GameObject.GetComponent<Animator>();
+            this.GameObject.SetActive(false);
+
+            if (this.UiData.IsLuaUI)
+            {
+                //todo 创建lua代理
+                //this.UIProxy = new UILuaProxy(this);
+            }
+            else
+            {
+                //创建Mono代理
+                System.Type type = UIManager.Instance.GetType(this.UiData.UiName);
+                this.UIProxy = System.Activator.CreateInstance(type) as UIProxy;
+                this.UIProxy.SetUi(this);
+            }
         }
+
+        /// <summary>
+        /// 设置界面层级
+        /// </summary>
+        /// <param name="order"></param>
+        public void SetCavansOrder(int order)
+        {
+            this.SortingOrder = order;
+
+            if (CanvasDic != null)
+            {
+                foreach (var kv in CanvasDic)
+                    kv.Key.sortingOrder = kv.Value + order;
+            }
+        }
+
+        #region Awake
+        public virtual void Awake()
+        {
+            if (this.UIState == UIStateType.None)
+            {
+                this.UIState = UIStateType.Awake;
+                AwakeState = true;
+
+                this.OnAwake();
+                UIManager.Instance.NotifyAwake(this);
+                this.GameObject.SetActive(false);
+            }
+        }
+        public void OnAwake()
+        {
+            this.UIProxy?.OnAwake();
+        }
+
+        #endregion
     }
+
+
 }
