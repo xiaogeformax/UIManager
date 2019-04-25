@@ -251,12 +251,12 @@ namespace UIFramework
             uiRegisterDic.TryGetValue(uiName, out uiData);
             if (uiData == null)
             {
-                Debug.LogError($"{uiName}:不存在");
+                UnityEngine.Debug.LogError($"{uiName}:不存在");
                 return null;
             }
             if (uiData.IsChildUI)
             {
-                Debug.LogError($"子UI:{uiName}不能使用CreateUI创建");
+                UnityEngine.Debug.LogError($"子UI:{uiName}不能使用CreateUI创建");
                 return null;
             }
             GameUI ui = new GameUI();
@@ -432,7 +432,7 @@ namespace UIFramework
             UIData uiData = FindUIData(uiName);
             if (uiData == null)
             {
-                Debug.LogError($"{uiName}未注册");
+                UnityEngine.Debug.LogError($"{uiName}未注册");
                 return;
             }
 
@@ -465,7 +465,7 @@ namespace UIFramework
             UIData uiData = FindUIData(uiName);
             if (uiData == null)
             {
-                Debug.LogError($"OpenWithCallbackAsync {uiName}未注册");
+                UnityEngine.Debug.LogError($"OpenWithCallbackAsync {uiName}未注册");
                 return;
             }
 
@@ -726,7 +726,7 @@ namespace UIFramework
                     GameObject childGameObject = childUi.ParentUI.GameObject.FindGameObject(childUi.UiData.UiName);
                     if (childGameObject == null)
                     {
-                        Debug.LogErrorFormat("父UI:{0}不存在子UI节点:{1}", childUi.UiData.ParentUIName, childUi.UiData.UiName);
+                        UnityEngine.Debug.LogErrorFormat("父UI:{0}不存在子UI节点:{1}", childUi.UiData.ParentUIName, childUi.UiData.UiName);
                     }
                     else
                     {
